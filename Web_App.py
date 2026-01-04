@@ -50,7 +50,7 @@ page_style = """
 
     /* Subheaders (H2, H3) */
     h2, h3 {
-        font-size: 2.0rem !important;
+        font-size: 1.5rem !important;
         font-weight: 700 !important;
         color: #ffffff !important;
         text-shadow: 2px 2px 4px #000000;
@@ -58,7 +58,7 @@ page_style = """
 
     /* Standard Text (Paragraphs) */
     p, li, .stMarkdown {
-        font-size: 1.8rem !important; /* Bigger body text */
+        font-size: 1.2rem !important; /* Bigger body text */
         font-weight: 630 !important;
         color: #f0f0f0 !important;
         text-shadow: 1px 1px 2px #000000;
@@ -67,19 +67,19 @@ page_style = """
 
     /* Sidebar Labels */
     .stSlider label, .stSelectbox label {
-        font-size: 1.4rem !important;
+        font-size: 1.3rem !important;
         color: #ffffff !important;
         font-weight: 630 !important;
     }
 
     /* Sidebar Values */
     div[data-testid="stMarkdownContainer"] p {
-        font-size: 1.4rem !important;
+        font-size: 1.0rem !important;
     }
     
     /* Success/Prediction Box Text */
     .prediction-box h2 {
-        font-size: 2.5rem !important;
+        font-size: 2.0rem !important;
         text-shadow: none;
     }
 
