@@ -206,3 +206,6 @@ with col2:
     ax.legend(wedges, labels, title="Status", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), fontsize=6)
 
     st.pyplot(fig)
+
+st.markdown("---")
+st.subheader("👨🏻‍💻Developed by **Ahmed Arab**")
