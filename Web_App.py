@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # 🔧 CONFIGURATION
 # =========================
 # Paste your company logo URL here
-COMPANY_LOGO_URL = "https://admin.arcom.com.eg/images/page/6792191f561a3.png" # Placeholder plant icon
+COMPANY_LOGO_URL = "https://admin.arcom.com.eg/images/page/6792191f561a3.png" 
 
 st.set_page_config(
     page_title="Plant Health Monitoring",
@@ -20,7 +20,6 @@ st.set_page_config(
 # =========================
 # 🎨 CUSTOM CSS (Fonts & Styling)
 # =========================
-# This block handles the "Bigger Fonts" and Background
 page_style = """
 <style>
     /* Main app background */
@@ -42,7 +41,7 @@ page_style = """
     
     /* Main Title (H1) */
     h1 {
-        font-size: 2.3rem !important; /* Much bigger */
+        font-size: 2.3rem !important; 
         font-weight: 700 !important;
         color: #ffffff !important;
         text-shadow: 3px 3px 6px #000000;
@@ -58,7 +57,7 @@ page_style = """
 
     /* Standard Text (Paragraphs) */
     p, li, .stMarkdown {
-        font-size: 1.4rem !important; /* Bigger body text */
+        font-size: 1.4rem !important; 
         font-weight: 630 !important;
         color: #f0f0f0 !important;
         text-shadow: 1px 1px 2px #000000;
@@ -90,7 +89,6 @@ st.markdown(page_style, unsafe_allow_html=True)
 # =========================
 # 🏗️ HEADER WITH LOGO
 # =========================
-# Using columns to put Title on left and Logo on right
 col_header, col_logo = st.columns([4, 1])
 
 with col_header:
@@ -99,26 +97,16 @@ with col_header:
 with col_logo:
     st.image(COMPANY_LOGO_URL, width=120) 
 
-
-
 st.markdown(
     """
     This interactive web app predicts the health status of a plant based on environmental 
     and soil conditions using an Artificial Intelligence model.
-    
-    The model classifies the plant into one of three states:
-    * **Healthy** (Optimal conditions)
-    * **Moderate Stress** (Requires attention)
-    * **High Stress** (Critical condition)
     """
 )
 
 st.markdown("---")
 st.subheader("📊 About The Data")
 st.write("The model analyzes factors like Soil Moisture, Temperature, Light Intensity, and Nutrient Levels to determine plant health.")
-
-
-
 
 # =========================
 # 📥 LOAD MODEL
@@ -181,11 +169,12 @@ st.markdown(
 )
 
 # =========================
-# Probabilities + Chart Side by Side
+# Probabilities + BIGGER Chart Side by Side
 # =========================
 st.subheader("📊 Confidence Levels")
 
-col1, col2 = st.columns([2, 1])  # wider column for text, smaller for chart
+# CHANGED: Equal width columns to give the chart more room
+col1, col2 = st.columns([1, 1])
 
 with col1:
     st.write(f"🟢 **Healthy:** {prediction_proba[0]:.2%}")
@@ -193,19 +182,74 @@ with col1:
     st.write(f"🔴 **High Stress:** {prediction_proba[2]:.2%}")
 
 with col2:
-    fig, ax = plt.subplots(figsize=(2, 2))  # smaller chart
-    labels = ["Healthy", "Moderate", "High"]
-    colors = ["#4CAF50", "#FFC107", "#FF5252"] # Green, Amber, Red
+    # CHANGED: Increased figsize to (5, 5) for a bigger pie chart
+    fig, ax = plt.subplots(figsize=(5, 5), facecolor='none') 
+    ax.set_facecolor('none')
     
-    # Create pie chart
+    labels = ["Healthy", "Moderate", "High"]
+    colors = ["#4CAF50", "#FFC107", "#FF5252"]
+    
+    # CHANGED: Increased font size in textprops
     wedges, texts, autotexts = ax.pie(prediction_proba, labels=None, autopct="%1.1f%%",
-           startangle=90, colors=colors, textprops={"fontsize": 8})
+           startangle=90, colors=colors, textprops={"fontsize": 14, "color":"white", "weight":"bold"})
     ax.axis("equal")
     
-    # Add legend to avoid clutter on small chart
-    ax.legend(wedges, labels, title="Status", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), fontsize=6)
+    # Legend with adjusted text size
+    legend = ax.legend(wedges, labels, title="Status", loc="center", bbox_to_anchor=(0.5, -0.15), fontsize=12)
+    plt.setp(legend.get_title(), color='white', fontsize=14)
+    for text in legend.get_texts():
+        text.set_color("white")
 
-    st.pyplot(fig)
+    st.pyplot(fig, transparent=True)
+
+# =========================
+# 🔍 NEW: FEATURE IMPORTANCE CHART
+# =========================
+st.markdown("---")
+st.subheader("🔍 Model Insights (Feature Importance)")
+st.write("The chart below shows which environmental factors had the biggest impact on this prediction.")
+
+if hasattr(model, "feature_importances_"):
+    # Feature names in the exact order of the input array
+    feature_names = [
+        'Soil Moisture', 'Ambient Temperature', 'Soil Temperature',
+        'Humidity', 'Light Intensity', 'Soil pH', 'Nitrogen Level',
+        'Phosphorus Level', 'Potassium Level', 'Chlorophyll Content',
+        'Electrochemical Signal'
+    ]
+    
+    # Get importances and sort them
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1] # Sort descending
+    
+    sorted_names = [feature_names[i] for i in indices]
+    sorted_importances = importances[indices]
+    
+    # Create Plot
+    fig_feat, ax_feat = plt.subplots(figsize=(10, 6), facecolor='none')
+    ax_feat.set_facecolor('none')
+    
+    # Create horizontal bars
+    # Using a green-blue color palette
+    colors_bar = plt.cm.YlGnBu_r(np.linspace(0.2, 0.8, len(importances)))
+    bars = ax_feat.barh(range(len(indices)), sorted_importances, align='center', color=colors_bar)
+    
+    # Styling text for dark background
+    ax_feat.set_yticks(range(len(indices)))
+    ax_feat.set_yticklabels(sorted_names, color='white', fontsize=12)
+    ax_feat.invert_yaxis()  # Labels read top-to-bottom
+    ax_feat.set_xlabel('Importance Score', color='white', fontsize=14)
+    ax_feat.set_title('Top Influential Factors', color='white', fontsize=16)
+    
+    # Color the axes lines (spines) and ticks white
+    ax_feat.tick_params(axis='x', colors='white')
+    ax_feat.tick_params(axis='y', colors='white')
+    for spine in ax_feat.spines.values():
+        spine.set_edgecolor('white')
+
+    st.pyplot(fig_feat, transparent=True)
+else:
+    st.info("This model type does not support feature importance visualization.")
 
 st.markdown("---")
 st.subheader("👨🏻‍💻Developed by **Ahmed Arab**")
