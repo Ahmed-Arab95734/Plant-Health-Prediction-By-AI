@@ -173,7 +173,6 @@ st.markdown(
 # =========================
 st.subheader("📊 Confidence Levels")
 
-# CHANGED: Equal width columns to give the chart more room
 col1, col2 = st.columns([1, 1])
 
 with col1:
@@ -182,16 +181,17 @@ with col1:
     st.write(f"🔴 **High Stress:** {prediction_proba[2]:.2%}")
 
 with col2:
-    # CHANGED: Increased figsize to (5, 5) for a bigger pie chart
     fig, ax = plt.subplots(figsize=(5, 5), facecolor='none') 
     ax.set_facecolor('none')
     
     labels = ["Healthy", "Moderate", "High"]
     colors = ["#4CAF50", "#FFC107", "#FF5252"]
     
-    # CHANGED: Increased font size in textprops
+    # CHANGED: Added pctdistance=1.25 and radius=0.75 to move text outside
     wedges, texts, autotexts = ax.pie(prediction_proba, labels=None, autopct="%1.1f%%",
-           startangle=90, colors=colors, textprops={"fontsize": 14, "color":"white", "weight":"bold"})
+           startangle=90, colors=colors, 
+           radius=0.75, pctdistance=1.1, # Move text outside
+           textprops={"fontsize": 14, "color":"white", "weight":"bold"})
     ax.axis("equal")
     
     # Legend with adjusted text size
@@ -203,7 +203,7 @@ with col2:
     st.pyplot(fig, transparent=True)
 
 # =========================
-# 🔍 NEW: FEATURE IMPORTANCE CHART
+# 🔍 FEATURE IMPORTANCE CHART
 # =========================
 st.markdown("---")
 st.subheader("🔍 Model Insights (Feature Importance)")
